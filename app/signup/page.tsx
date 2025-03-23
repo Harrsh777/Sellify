@@ -1,10 +1,11 @@
-"use client"
+"use client";
 import React, { useState } from "react";
-import {supabase} from "@/lib/supabaseclient";
-import { useRouter } from "next/navigation";
-import router from "next/router";
+import { supabase } from "@/lib/supabaseclient";
+import { useRouter } from "next/navigation"; // Correct router import
 
 const Signup = () => {
+  const router = useRouter(); // Initialize the router
+
   const [selectedRole, setSelectedRole] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -12,49 +13,41 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const roles = [
-    "Retailer", "Wholesaler", "Manufacturer", "Distributor", "Exporter", "Other"
-  ];
+  const roles = ["Retailer", "Wholesaler", "Manufacturer", "Distributor", "Exporter", "Other"];
+  const industries = ["Textiles", "Handicrafts", "Spices", "Agriculture", "Electronics", "Other"];
 
-  const industries = [
-    "Textiles", "Handicrafts", "Spices", "Agriculture", "Electronics", "Other"
-
-
-  ];
-
-  const handleSelection = (setter: { (value: React.SetStateAction<string>): void; (value: React.SetStateAction<string>): void; (arg0: any): void; }, value: string) => {
+  const handleSelection = (setter: (value: string) => void, value: string) => {
     setter(value);
   };
 
   const handleSignUp = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("users")
-        .insert([{
+      const { error } = await supabase.from("users").insert([
+        {
           company_name: companyName,
           email: email,
           password: password,
           role: selectedRole,
           industry: selectedIndustry,
-        }]);
-  
-        if (error) {
-            console.error("Error details:", error); // Log the entire error object for inspection
-            alert("Signup failed: " + error.message);
-            return;
-          }
-      
-          alert("Signup successful!");
-          router.push("/signin"); // Redirect to signin page after signup
-        } catch (err) {
-          console.error("Unexpected error:", err); // Log any unexpected errors
-          alert("Signup failed: An unexpected error occurred.");
-        } finally {
-          setLoading(false);
-        }
-      };
-  
+        },
+      ]);
+
+      if (error) {
+        console.error("Error details:", error);
+        alert("Signup failed: " + error.message);
+        return;
+      }
+
+      alert("Signup successful!");
+      router.push("/mainpage"); // Redirect to the main page (page.tsx)
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      alert("Signup failed: An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-center p-8 bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
@@ -74,9 +67,7 @@ const Signup = () => {
                 key={role}
                 onClick={() => handleSelection(setSelectedRole, role)}
                 className={`px-4 py-2 rounded-full font-semibold transition-transform duration-200 ease-in-out ${
-                  selectedRole === role
-                    ? "bg-blue-600 text-white scale-105"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                  selectedRole === role ? "bg-blue-600 text-white scale-105" : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                 }`}
               >
                 {role}
@@ -93,9 +84,7 @@ const Signup = () => {
                 key={industry}
                 onClick={() => handleSelection(setSelectedIndustry, industry)}
                 className={`px-4 py-2 rounded-full font-semibold transition-transform duration-200 ease-in-out ${
-                  selectedIndustry === industry
-                    ? "bg-purple-600 text-white scale-105"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                  selectedIndustry === industry ? "bg-purple-600 text-white scale-105" : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                 }`}
               >
                 {industry}
